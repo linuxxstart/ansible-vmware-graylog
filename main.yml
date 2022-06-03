@@ -1,0 +1,26 @@
+
+  - name: Criando vms
+    hosts: all
+    gather_facts: no
+    roles:
+      - vms
+ 
+  - name: Pré-requisito
+    hosts: graylog
+    roles:
+      - prerequisito
+  
+  - name: MongoDB
+    hosts: graylog
+    roles:
+      - mongodb
+
+  - name: Elastic Search
+    hosts: graylog
+    roles:
+      - elastic
+
+  - name: Graylog Server
+    hosts: graylog
+    roles:
+      - graylog

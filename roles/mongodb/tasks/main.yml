@@ -1,0 +1,20 @@
+  - name: Adicionar repositório mongodb
+    tags: add-repo-mongodb
+    shell: |
+      wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
+      echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+
+  - name: Instalar mongodb
+    tags: install-mongodb
+    apt:
+      update_cache: yes
+      name:
+        - mongodb-org
+      state: present
+  
+  - name: Iniciar o mongodb
+    tags: start-mongodb
+    shell: |
+      systemctl daemon-reload
+      systemctl enable mongod.service
+      systemctl restart mongod.service

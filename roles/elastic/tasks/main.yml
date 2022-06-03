@@ -1,0 +1,25 @@
+  - name: Adicionar repositório elasticsearch
+    tags: add-repo-elastic
+    shell: | 
+      wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch |apt-key add -
+      echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-7.x.list
+    
+  - name: Instalar elasticsearch
+    apt:
+      update_cache: yes
+      name:
+        - elasticsearch
+      state: present
+  
+  - name: Configurar nome do cluster
+    tags: config-cluster-elastic
+    shell: |
+      sed -i 's/^#\(cluster\.name:\).*/\1 graylog/' /etc/elasticsearch/elasticsearch.yml
+      echo "action.auto_create_index: false" >> /etc/elasticsearch/elasticsearch.yml
+  
+  - name: Iniciar o elasticsearch
+    tags: start-elastic
+    shell: |
+      systemctl daemon-reload
+      systemctl enable elasticsearch.service
+      systemctl restart elasticsearch.service

@@ -1,0 +1,22 @@
+  - name: Atualizando repositório
+    tags: update-repo
+    apt: 
+      update_cache: yes
+
+  #- name: Atualiza todos os pacotes
+  #  tags: upgrade
+  #  apt: 
+  #    upgrade: dist
+
+  - name: Instalando pacotes pré-requisitos
+    tags: install-prereq
+    apt:
+      name: 
+        - apt-transport-https
+        - openjdk-11-jre-headless
+        - uuid-runtime
+        - pwgen
+        - dirmngr
+        - gnupg
+        - wget
+      state: latest

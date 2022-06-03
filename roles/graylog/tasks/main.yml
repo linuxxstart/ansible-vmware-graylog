@@ -1,0 +1,33 @@
+  - name: Adicionar repositório graylog
+    tags: add-repo-graylog
+    shell: |
+      wget https://packages.graylog2.org/repo/packages/graylog-4.2-repository_latest.deb
+      dpkg -i graylog-4.2-repository_latest.deb
+    
+  - name: Instalar graylog 
+    tags: install-graylog
+    apt:
+      update_cache: yes
+      name:
+        - graylog-server
+        - graylog-integrations-plugins
+      state: present
+    
+  - name : Configurar graylog
+    tags: config-graylog
+    shell: |
+      sed -i -e 's/#http_bind_address = 127.0.0.1:9000/http_bind_address = 0.0.0.0:9000/' /etc/graylog/server/server.conf
+      sed -i 's/^#\(root_timezone =\).*/\1 America\/Sao\_Paulo/' /etc/graylog/server/server.conf
+      SECRET=$(pwgen -s 96 1) ; \
+      sed -i -e 's/password_secret =.*/password_secret = '$SECRET'/' /etc/graylog/server/server.conf ; \
+      unset SECRET
+      PASSWORD=$(echo -n 'senha' | shasum -a 256 | awk '{print $1}') ; \
+      sed -i -e 's/root_password_sha2 =.*/root_password_sha2 = '$PASSWORD'/' /etc/graylog/server/server.conf ; \
+      unset PASSWORD
+
+  - name: Iniciar o graylog
+    tags: start-graylog
+    shell: |
+      systemctl daemon-reload
+      systemctl enable graylog-server.service
+      systemctl restart graylog-server.service
